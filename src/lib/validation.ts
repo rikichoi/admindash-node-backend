@@ -124,7 +124,7 @@ export const createOrganisationSchema = z.object({
 })
 
 export const createOrganisationImageSchema = z.object({
-    image: z.array(z.instanceof(File)
+    image: z.array(z.any()
         .refine((file) => file.size < 2 * 1024 * 1024, 'File size must be less than 2MB'),
     )
         .min(1, 'At least 1 file is required').refine(
@@ -137,7 +137,7 @@ export const createOrganisationImageSchema = z.object({
 })
 
 export const editOrganisationImageSchema = z.object({
-    image: z.array(z.instanceof(File)
+    image: z.array(z.any()
         .refine((file) => file.size < 2 * 1024 * 1024, 'File size must be less than 2MB'),
     )
         .min(1, 'At least 1 file is required').refine(
