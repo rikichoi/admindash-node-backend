@@ -9,7 +9,7 @@ import cors from "cors";
 
 const app = express();
 const corsOptions = {
-    origin: 'https://3.128.24.35',
+    origin: ['https://admindash-sooty.vercel.app', 'https://nexagrid.vercel.app/', 'http://localhost:3000'],
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 }
