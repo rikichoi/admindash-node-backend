@@ -9,7 +9,7 @@ import cors from "cors";
 
 const app = express();
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://3.128.24.35',
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 }

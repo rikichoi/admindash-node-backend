@@ -8,7 +8,7 @@ mongoose.connect(envSanitisedSchema.MONGO_DB_CONNECTION_STRING)
     .then(() => {
         console.log("Connected to MongoDB Successfully!")
         app.listen(envSanitisedSchema.PORT, () => {
-            console.log(`Server successfully started on http://localhost:${envSanitisedSchema.PORT}/`);
+            console.log(`Server successfully started on PORT:${envSanitisedSchema.PORT}/`);
         })
     }
     )

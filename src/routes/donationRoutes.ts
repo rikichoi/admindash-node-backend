@@ -7,6 +7,6 @@ router.get("/get-stripe-donations", DonationController.getStripeDonations);
 
 router.get("/get-donations", DonationController.getDonations);
 
-router.post("/create-donation/:amount&:orgName&:comment&:donorName&:itemId&:email&:phone", DonationController.createDonation);
+router.post("/create-donation/:amount&:orgId&:comment&:donorName&:itemId&:email&:phone", DonationController.createDonation);
 
 export default router;

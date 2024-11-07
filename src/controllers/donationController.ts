@@ -29,21 +29,31 @@ export const getDonations = async (req: Request, res: Response, next: NextFuncti
 
 export const createDonation = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log(req.params)
+
         const data = await createDonationSchema.safeParseAsync(req.params)
-        const item = await Donation.create({
-            amount: data.data?.amount,
-            orgName: data.data?.orgName,
-            comment: data.data?.comment,
-            donorName: data.data?.donorName,
-            email: data.data?.email,
-            phone: data.data?.phone,
-            itemId: data.data?.itemId,
-        });
-        if (item) {
-            res.status(201).json({ message: 'Item created successfully' });
-        } else {
-            res.status(400).json({ message: 'Invalid item data' });
+        if (data.success) {
+            const item = await Donation.create({
+                amount: parseInt(data.data?.amount),
+                orgId: data.data?.orgId,
+                comment: data.data?.comment,
+                donorName: (data.data?.donorName || ""),
+                email: data.data?.email,
+                phone: (data.data?.phone == "null" ? undefined : parseInt(data.data?.phone || "0")),
+                itemId: (data.data?.itemId
+                     == "null" ? undefined : data.data?.itemId),
+            });
+            if (item) {
+                res.status(201).json({ message: 'Item created successfully' });
+            } else {
+                res.status(400).json({ message: 'Invalid item data' });
+            }
         }
+        else {
+            throw createHttpError(404, `error: 'Validation error', details: ${data.error} `)
+
+        }
+
     } catch (error) {
         if (error instanceof ZodError) {
             throw createHttpError(404, `error: 'Invalid data', details: ${error.message} `)

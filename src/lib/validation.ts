@@ -89,7 +89,7 @@ export type CreateItemSchema = z.infer<typeof createItemSchema>
 
 const contactSchema = z.object({
     email: z.string().optional().or(z.literal("")),
-    phone: z.string().regex(/^(0|[1-9]\d*(\.\d{1})?|0\.\d{1})$/, "Must be a number").optional().or(z.literal("")),
+    phone: z.string().optional().or(z.literal("")),
 }).refine((data) => data.email || data.phone, {
     message: "Email or url is required",
     path: ["email"],
@@ -98,10 +98,10 @@ const contactSchema = z.object({
 
 export const createDonationSchema = z.object({
     amount: requiredNumericString,
-    orgName: requiredString,
+    orgId: requiredString,
     comment: requiredString,
     donorName: z.string().optional(),
-    itemId: requiredString,
+    itemId: z.string().optional(),
 }).and(contactSchema)
 
 export type CreateDonationSchema = z.infer<typeof createDonationSchema>

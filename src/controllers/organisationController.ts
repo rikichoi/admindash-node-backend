@@ -5,8 +5,9 @@ import createHttpError from "http-errors";
 import Organisation from "../models/organisation";
 import { isValidObjectId } from "mongoose";
 import Item from "../models/item";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import crypto from "crypto"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 // TODO: look into image resizing and optimisation later
 // import sharp from "sharp";
 
@@ -77,7 +78,17 @@ export const createOrganisation = async (req: Request, res: Response, next: Next
 export const getOrganisations = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const organisations = await Organisation.find().exec();
-        res.status(200).json(organisations)
+        const imageUrlsArray: string[] = []
+        const organisationsWithUrls = await Promise.all(organisations.map(async (organisation) => {
+            await Promise.all(organisation.image.map(async (img) => {
+                const command = new GetObjectCommand({ Bucket: envSanitisedSchema.BUCKET_NAME, Key: img });
+                const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+                imageUrlsArray.push(url)
+                organisation.imageUrls = imageUrlsArray;
+            }));
+            return organisation;
+        }));
+        res.status(200).json(organisationsWithUrls)
     } catch (error) {
         next(error)
     }
@@ -112,7 +123,7 @@ export const editOrganisation = async (req: Request, res: Response, next: NextFu
                         console.log(imageNameArray)
                     }));
                 }
-//TODO: implement delete function for any removed previousimage items from s3 bucket
+                //TODO: implement delete function for any removed previousimage items from s3 bucket
                 data.data.previousImages.map(item => {
                     if (item) {
                         imageNameArray.push(item);
