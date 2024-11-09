@@ -20,7 +20,7 @@ const DonationSchema = new Schema({
     donorName: { type: String, required: false },
     email: { type: String, required: false },
     phone: { type: Number, required: false },
-    itemId: [{ type: Schema.Types.ObjectId, ref: 'Item', required: false }],
+    itemId: { type: Schema.Types.ObjectId, ref: 'Item', required: false },
     // orgId: { type: String, required: true },
     // organisations: [{ type: Schema.Types.ObjectId, ref: 'Organisation' }],
 }, { timestamps: true });

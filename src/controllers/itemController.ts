@@ -95,19 +95,15 @@ export const editItem = async (req: Request, res: Response, next: NextFunction):
                         createHttpError(400, `Failed to upload image. ${error}`)
                     }
                 }
-
                 itemExists.summary = (data.data.summary || itemExists.summary)
                 itemExists.description = (data.data.description || itemExists.description)
                 itemExists.name = (data.data.name || itemExists.name)
                 itemExists.activeStatus = (JSON.parse(data.data.activeStatus) || itemExists.activeStatus)
-                itemExists.donationGoalValue = (parseInt(data.data.donationGoalValue) || itemExists.donationGoalValue)
-                itemExists.totalDonationValue = (parseInt(data.data.totalDonationValue) || itemExists.totalDonationValue)
+                itemExists.donationGoalValue = (data.data.donationGoalValue == "0" ? 0 : parseInt(data.data.donationGoalValue) || itemExists.donationGoalValue)
+                itemExists.totalDonationValue = (data.data.totalDonationValue == "0" ? 0 : parseInt(data.data.totalDonationValue) || itemExists.totalDonationValue)
                 itemExists.orgId = (data.data.orgId || itemExists.orgId)
                 itemExists.itemImage = (imageData.data?.originalname || itemExists.itemImage)
-
-
                 const updatedItem = await itemExists.save();
-
                 res.status(200).json(updatedItem);
             }
             else { res.status(400).json({ message: 'Item does not exist' }) };
