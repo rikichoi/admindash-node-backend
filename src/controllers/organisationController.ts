@@ -78,9 +78,9 @@ export const createOrganisation = async (req: Request, res: Response, next: Next
 export const getOrganisations = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const organisations = await Organisation.find().exec();
-        const imageUrlsArray: string[] = []
         const organisationsWithUrls = await Promise.all(organisations.map(async (organisation) => {
             await Promise.all(organisation.image.map(async (img) => {
+                const imageUrlsArray: string[] = []
                 const command = new GetObjectCommand({ Bucket: envSanitisedSchema.BUCKET_NAME, Key: img });
                 const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
                 imageUrlsArray.push(url)
