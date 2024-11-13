@@ -4,6 +4,8 @@ import { createDonationSchema } from "../lib/validation";
 import { ZodError } from "zod";
 import createHttpError from "http-errors";
 import Donation from "../models/donation";
+import Item from "../models/item";
+import Organisation from "../models/organisation";
 
 export const getStripeDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -30,37 +32,57 @@ export const getDonations = async (req: Request, res: Response, next: NextFuncti
 export const createDonation = async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log(req.params)
-
         const data = await createDonationSchema.safeParseAsync(req.params)
         if (data.success) {
-            const item = await Donation.create({
-                amount: parseInt(data.data?.amount),
-                orgId: data.data?.orgId,
-                comment: data.data?.comment,
-                donorName: (data.data?.donorName || ""),
-                email: data.data?.email,
-                phone: (data.data?.phone == "null" ? undefined : parseInt(data.data?.phone || "0")),
-                itemId: (data.data?.itemId
-                     == "null" ? undefined : data.data?.itemId),
-            });
-            if (item) {
-                res.status(201).json({ message: 'Item created successfully' });
-            } else {
-                res.status(400).json({ message: 'Invalid item data' });
+            const transaction = await Donation.startSession();
+            transaction.startTransaction();
+            try {
+                const organisation = await Organisation.findOne({ _id: data.data.orgId })
+                if (organisation) {
+                    organisation.totalDonationsValue = parseInt(organisation.totalDonationsValue + data.data.amount)
+                    organisation.totalDonationsCount = (organisation.totalDonationsCount + 1)
+                    await organisation.save();
+                    await Donation.create({
+                        amount: parseInt(data.data?.amount),
+                        orgId: data.data?.orgId,
+                        comment: data.data?.comment,
+                        donorName: (data.data?.donorName || ""),
+                        email: data.data?.email,
+                        phone: (data.data?.phone == "null" ? undefined : parseInt(data.data?.phone || "0")),
+                        itemId: (data.data?.itemId
+                            == "null" ? undefined : data.data?.itemId),
+                    });
+                    if (data.data.itemId) {
+                        const item = await Item.findOne({ _id: data.data.itemId })
+                        console.log(item)
+                        if (!item) {
+                            await transaction.abortTransaction();
+                            res.status(400).json({ message: 'Selected item could not be found' });
+                        }
+                        else {
+                            item.totalDonationValue = (parseInt(item.totalDonationValue + data.data.amount))
+                            await item.save();
+                            await transaction.commitTransaction();
+                            res.status(201).json({ message: "Donation created successfully" })
+                        }
+
+                    }
+                    await transaction.commitTransaction();
+                    res.status(201).json({ message: "Donation created successfully" })
+                }
+            }
+            catch (error) {
+                await transaction.abortTransaction();
+                res.status(400).json({ message: "Unable to create organistion", error })
             }
         }
-        else {
-            throw createHttpError(404, `error: 'Validation error', details: ${data.error} `)
-
-        }
-
-    } catch (error) {
+    }
+    catch (error) {
         if (error instanceof ZodError) {
             throw createHttpError(404, `error: 'Invalid data', details: ${error.message} `)
         }
         else {
             next(error)
-
         }
     }
 }
