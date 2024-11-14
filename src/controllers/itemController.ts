@@ -7,6 +7,7 @@ import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } fro
 import { envSanitisedSchema } from '../lib/validation';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { isValidObjectId } from "mongoose";
+import Organisation from "../models/organisation";
 
 const s3 = new S3Client({
     credentials: {
@@ -21,40 +22,56 @@ export const createItem = async (req: Request, res: Response, next: NextFunction
         const data = await createItemSchema.safeParseAsync(req.body);
         const imageData = await itemImageSchema.safeParseAsync(req.file)
         if (data.success && imageData.success) {
-            const itemExists = await Item.findOne({ name: data.data.name });
-            if (itemExists) { res.status(400).json({ message: 'Item already exists' }) };
-
+            const transaction = await Item.startSession();
+            transaction.startTransaction();
             try {
-                const command = new PutObjectCommand({
-                    Bucket: envSanitisedSchema.BUCKET_NAME,
-                    Key: imageData.data.originalname,
-                    Body: imageData.data.buffer,
-                    ContentType: imageData.data.mimetype
-                })
+                const itemExists = await Item.findOne({ name: data.data.name });
+                if (itemExists) { res.status(400).json({ message: 'Item already exists' }) };
+                try {
+                    const organisation = await Organisation.findOne({ _id: data.data.orgId })
+                    if (organisation) {
+                        organisation.totalDonationItemsCount = organisation.totalDonationItemsCount + 1
+                        const edittedOrganisation = await organisation.save()
+                        const command = new PutObjectCommand({
+                            Bucket: envSanitisedSchema.BUCKET_NAME,
+                            Key: imageData.data.originalname,
+                            Body: imageData.data.buffer,
+                            ContentType: imageData.data.mimetype
+                        })
 
-                await s3.send(command)
-
-                const item = await Item.create({
-                    summary: data.data.summary,
-                    description: data.data.description,
-                    name: data.data.name,
-                    donationGoalValue: data.data.donationGoalValue,
-                    totalDonationValue: data.data.totalDonationValue,
-                    activeStatus: data.data.activeStatus,
-                    orgId: data.data.orgId,
-                    itemImage: imageData.data.originalname,
-                });
-                if (item) {
-                    res.status(201).json({ message: 'Item created successfully' });
-                } else {
-                    res.status(400).json({ message: 'Invalid item data' });
+                        await s3.send(command)
+                        const item = await Item.create({
+                            summary: data.data.summary,
+                            description: data.data.description,
+                            name: data.data.name,
+                            donationGoalValue: data.data.donationGoalValue,
+                            totalDonationValue: data.data.totalDonationValue,
+                            activeStatus: data.data.activeStatus,
+                            orgId: data.data.orgId,
+                            itemImage: imageData.data.originalname,
+                        });
+                        if (item && edittedOrganisation) {
+                            await transaction.commitTransaction();
+                            res.status(201).json({ message: 'Item created successfully' });
+                        } else {
+                            await transaction.abortTransaction();
+                            res.status(400).json({ message: 'Invalid item data' });
+                        }
+                    }
+                    else {
+                        await transaction.abortTransaction();
+                        res.status(400).json({ message: 'Selected organisation could not be found.' });
+                    }
                 }
-            }
-            catch (error) {
-                throw createHttpError(400, `Failed to upload image. Error message: ${error}`)
-            }
+                catch (error) {
+                    await transaction.abortTransaction();
+                    throw createHttpError(400, `Failed to upload image. Error message: ${error}`)
+                }
 
-
+            } catch (error) {
+                await transaction.abortTransaction();
+                res.status(400).json({ message: "Unable to create item", error })
+            }
 
         } else {
             throw createHttpError(400, `Invalid data,  ${data.error ? `Data details: ${data.error.message}` : ""}  ${imageData.error && `Image details: ${imageData.error.message}`}`);

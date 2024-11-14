@@ -31,7 +31,6 @@ export const getDonations = async (req: Request, res: Response, next: NextFuncti
 
 export const createDonation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.params)
         const data = await createDonationSchema.safeParseAsync(req.params)
         if (data.success) {
             const transaction = await Donation.startSession();
