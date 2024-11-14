@@ -40,9 +40,7 @@ export const createOrganisation = async (req: Request, res: Response, next: Next
 
                 await s3.send(command);
                 imageNameArray.push(imageName)
-                console.log(imageNameArray)
             }));
-            console.log(imageNameArray)
             const organisation = await Organisation.create({
                 ABN: data.data?.ABN,
                 activeStatus: data.data?.activeStatus,
