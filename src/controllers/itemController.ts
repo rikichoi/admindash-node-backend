@@ -172,18 +172,39 @@ export const getItems = async (req: Request, res: Response, next: NextFunction) 
 export const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const itemId = req.params.itemId;
-        const item = await Item.findOne({ _id: itemId }).exec();
-        if (item) {
-            await Item.deleteOne({ _id: itemId }).exec()
-            const command = new DeleteObjectCommand({
-                Bucket: envSanitisedSchema.BUCKET_NAME,
-                Key: item.itemImage,
-            })
-            await s3.send(command)
-            res.status(201).json({ message: `Item: ${item} deleted successfully` });
-        } else {
-            res.status(400).json({ message: 'Item does not exist' });
+        if (!isValidObjectId(itemId)) {
+            res.status(400).json({ message: "Invalid itemId" })
+        }
+        const transaction = await Item.startSession();
+        transaction.startTransaction()
+        try {
+            const item = await Item.findOne({ _id: itemId }).exec();
+            if (item) {
+                const organisation = await Organisation.findOne({ _id: item.orgId }).exec();
+                if (organisation) {
+                    organisation.totalDonationItemsCount = organisation.totalDonationItemsCount - 1
+                    organisation.save()
+                    await Item.deleteOne({ _id: itemId }).exec()
+                    const command = new DeleteObjectCommand({
+                        Bucket: envSanitisedSchema.BUCKET_NAME,
+                        Key: item.itemImage,
+                    })
+                    await s3.send(command)
+                    transaction.commitTransaction();
+                    res.status(201).json({ message: `Item: ${item} deleted successfully` });
+                }
+                else {
+                    transaction.abortTransaction();
+                    res.status(400).json({ message: "Error. Item not associated with an organisation" })
+                }
+            } else {
+                transaction.abortTransaction();
+                res.status(400).json({ message: 'Item does not exist' });
 
+            }
+        } catch (error) {
+            transaction.abortTransaction();
+            res.status(400).json({ message: "Error occured while trying to create item" + error })
         }
     } catch (error) {
         next(error)
