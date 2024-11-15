@@ -118,7 +118,6 @@ export const editOrganisation = async (req: Request, res: Response, next: NextFu
 
                         await s3.send(command);
                         imageNameArray.push(imageName)
-                        console.log(imageNameArray)
                     }));
                 }
                 //TODO: implement delete function for any removed previousimage items from s3 bucket
@@ -128,8 +127,6 @@ export const editOrganisation = async (req: Request, res: Response, next: NextFu
                     }
                 });
 
-                console.log(imageNameArray)
-
                 organisation.ABN = (parseInt(data.data.ABN) || organisation.ABN)
                 organisation.activeStatus = (JSON.parse(data.data.activeStatus) || organisation.activeStatus)
                 organisation.description = (data.data.description || organisation.description)
@@ -138,9 +135,9 @@ export const editOrganisation = async (req: Request, res: Response, next: NextFu
                 organisation.phone = (parseInt(data.data.phone) || organisation.phone)
                 organisation.summary = (data.data.summary || organisation.summary)
                 organisation.website = (data.data.website || organisation.website)
-                organisation.totalDonationsCount = (parseInt(data.data.totalDonationsCount) || organisation.totalDonationsCount)
-                organisation.totalDonationItemsCount = (parseInt(data.data.totalDonationItemsCount) || organisation.totalDonationItemsCount)
-                organisation.totalDonationsValue = (parseInt(data.data.totalDonationsValue) || organisation.totalDonationsValue)
+                organisation.totalDonationsCount = (data.data.totalDonationsCount == "0" ? 0 : parseInt(data.data.totalDonationsCount) || organisation.totalDonationsCount)
+                organisation.totalDonationItemsCount = (data.data.totalDonationItemsCount == "0" ? 0 : parseInt(data.data.totalDonationItemsCount) || organisation.totalDonationItemsCount)
+                organisation.totalDonationsValue = (data.data.totalDonationsValue == "0" ? 0 : parseInt(data.data.totalDonationsValue) || organisation.totalDonationItemsCount)
                 const edittedOrganisation = await organisation.save();
                 res.status(200).json(edittedOrganisation)
             }
