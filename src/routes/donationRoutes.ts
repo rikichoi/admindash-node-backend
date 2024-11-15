@@ -9,4 +9,6 @@ router.get("/get-donations", DonationController.getDonations);
 
 router.post("/create-donation/:amount&:orgId&:comment&:donorName&:itemId&:email&:phone", DonationController.createDonation);
 
+router.delete("/delete-donation/:donationId", DonationController.deleteDonation)
+
 export default router;

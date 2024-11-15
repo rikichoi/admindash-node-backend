@@ -6,6 +6,7 @@ import createHttpError from "http-errors";
 import Donation from "../models/donation";
 import Item from "../models/item";
 import Organisation from "../models/organisation";
+import { isValidObjectId } from "mongoose";
 
 export const getStripeDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,6 +75,63 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                 await transaction.abortTransaction();
                 res.status(400).json({ message: "Unable to create organistion", error })
             }
+        }
+    }
+    catch (error) {
+        if (error instanceof ZodError) {
+            throw createHttpError(404, `error: 'Invalid data', details: ${error.message} `)
+        }
+        else {
+            next(error)
+        }
+    }
+}
+
+export const deleteDonation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const donationId = req.params.donationId
+        if (!isValidObjectId(donationId)) {
+            res.status(400).json({ message: `Donation with ID: ${donationId} does not exist` })
+        }
+        const transaction = await Donation.startSession();
+        transaction.startTransaction();
+        try {
+            const donation = await Donation.findOne({ _id: donationId }).exec();
+            if (donation) {
+                const organisation = await Organisation.findOne({ _id: donation.orgId }).exec();
+                if (organisation) {
+                    organisation.totalDonationsCount = organisation.totalDonationsCount - 1
+                    organisation.totalDonationsValue = organisation.totalDonationsValue - donation.amount
+                    await organisation.save();
+                    if (donation.itemId) {
+                        const item = await Item.findOne({ _id: donation.itemId }).exec();
+                        if (item) {
+                            item.totalDonationValue = item.totalDonationValue - donation.amount
+                            await item.save()
+                        }
+                        else {
+                            await transaction.abortTransaction();
+                            res.status(400).json({ message: "Invalid itemId associated with donation" })
+                        }
+                    }
+
+                    await Donation.deleteOne({ _id: donationId })
+                    await transaction.commitTransaction();
+                    res.status(200).json({ message: "Donation deleted successfully" })
+                }
+                else {
+                    await transaction.abortTransaction();
+                    res.status(400).json({ message: "Organisation not found" })
+                }
+            }
+            else {
+                await transaction.abortTransaction();
+                res.status(400).json({ message: `Donation with ID: ${donationId} does not exist` })
+            }
+        }
+        catch (error) {
+            await transaction.abortTransaction();
+            res.status(400).json({ message: "Unable to create organistion", error })
         }
     }
     catch (error) {
