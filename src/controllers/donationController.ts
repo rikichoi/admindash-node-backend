@@ -22,7 +22,7 @@ export const getStripeDonations = async (req: Request, res: Response, next: Next
 
 export const getDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const donations = await Donation.find().populate('itemId') // multiple path names in one requires mongoose >= 3.6
+        const donations = await Donation.find().populate('itemId', 'name').populate('orgId', 'name') // multiple path names in one requires mongoose >= 3.6
             .exec();
         res.status(200).json(donations)
     } catch (error) {
