@@ -12,9 +12,9 @@ export const getStripeDonations = async (req: Request, res: Response, next: Next
     try {
         // TODO: Implement pagination feature. this endpoint is currently limited to retrieving 3 itemImageSchema, increase this number
         const balanceTransactions = await stripe.balanceTransactions.list({
-            limit: 3,
+            limit: 8,
         });
-        res.status(200).json(balanceTransactions.data)
+        res.status(200).json(balanceTransactions)
     } catch (error) {
         next(error)
     }
