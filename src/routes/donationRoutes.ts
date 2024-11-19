@@ -3,7 +3,7 @@ import * as DonationController from "../controllers/donationController"
 
 const router = express.Router();
 
-router.get("/get-stripe-donations", DonationController.getStripeDonations);
+router.get("/get-stripe-donations/:prevPage&:currentPage&:lastTransactionId", DonationController.getStripeDonations);
 
 router.get("/get-donations", DonationController.getDonations);
 
