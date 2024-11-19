@@ -10,6 +10,10 @@ router.post("/create-organisation", upload.array("image"), OrganisationControlle
 
 router.get("/get-organisations", OrganisationController.getOrganisations)
 
+router.get("/get-paginated-organisations/:currentPage", OrganisationController.getPaginatedOrganisations)
+
+router.get("/get-organisations-count", OrganisationController.getOrganisationsCount)
+
 router.delete("/delete-organisation/:orgId", OrganisationController.deleteOrganisation)
 
 router.patch("/edit-organisation/:orgId", upload.array("newImages"), OrganisationController.editOrganisation)

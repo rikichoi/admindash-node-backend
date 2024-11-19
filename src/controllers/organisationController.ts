@@ -92,6 +92,39 @@ export const getOrganisations = async (req: Request, res: Response, next: NextFu
     }
 }
 
+export const getPaginatedOrganisations = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const count = await Organisation.countDocuments().exec()
+        if (count == 0) {
+            res.status(200).json(null)
+        }
+        const skip = (req.params.currentPage == "1" || !req.params.currentPage ? 0 : (parseInt(req.params.currentPage) - 1) * 5)
+        const limit = 5
+        const organisations = await Organisation.find().skip(skip).limit(limit).exec();
+        const organisationsWithUrls = await Promise.all(organisations.map(async (organisation) => {
+            await Promise.all(organisation.image.map(async (img) => {
+                const imageUrlsArray: string[] = []
+                const command = new GetObjectCommand({ Bucket: envSanitisedSchema.BUCKET_NAME, Key: img });
+                const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+                imageUrlsArray.push(url)
+                organisation.imageUrls = imageUrlsArray;
+            }));
+            return organisation;
+        }));
+        res.status(200).json(organisationsWithUrls)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getOrganisationsCount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const count = await Organisation.countDocuments().exec()
+        res.status(200).json(count)
+    } catch (error) {
+        next(error)
+    }
+}
 
 export const editOrganisation = async (req: Request, res: Response, next: NextFunction) => {
     try {
