@@ -94,11 +94,8 @@ export const getOrganisations = async (req: Request, res: Response, next: NextFu
 
 export const getPaginatedOrganisations = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const count = await Organisation.countDocuments().exec()
-        if (count == 0) {
-            res.status(200).json(null)
-        }
-        const skip = (req.params.currentPage == "1" || !req.params.currentPage ? 0 : (parseInt(req.params.currentPage) - 1) * 5)
+        const currentPage = req.params.currentPage
+        const skip = (currentPage == "1" || !currentPage ? 0 : (parseInt(currentPage) - 1) * 5)
         const limit = 5
         const organisations = await Organisation.find().skip(skip).limit(limit).exec();
         const organisationsWithUrls = await Promise.all(organisations.map(async (organisation) => {
