@@ -94,6 +94,10 @@ export const getOrganisations = async (req: Request, res: Response, next: NextFu
 
 export const getPaginatedOrganisations = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const count = await Organisation.countDocuments().exec()
+        if (count <= 0) {
+            res.status(200).json(null)
+        }
         const currentPage = req.params.currentPage
         const skip = (currentPage == "1" || !currentPage ? 0 : (parseInt(currentPage) - 1) * 5)
         const limit = 5

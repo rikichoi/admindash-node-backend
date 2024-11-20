@@ -5,7 +5,6 @@ type Donation = {
     amount: number;
     comment: string;
     donorName?: string;
-    // TODO: append orgId to donation controller and this model and schema
     orgId: string;
     itemId?: string;
     createdAt: Date;
@@ -21,8 +20,6 @@ const DonationSchema = new Schema({
     email: { type: String, required: false },
     phone: { type: Number, required: false },
     itemId: { type: Schema.Types.ObjectId, ref: 'Item', required: false },
-    // orgId: { type: String, required: true },
-    // organisations: [{ type: Schema.Types.ObjectId, ref: 'Organisation' }],
 }, { timestamps: true });
 
 export default model<Donation>("Donation", DonationSchema);

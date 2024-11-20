@@ -10,7 +10,6 @@ import { isValidObjectId } from "mongoose";
 
 export const getStripeDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // TODO: Implement pagination feature. this endpoint is currently limited to retrieving 3 itemImageSchema, increase this number
         const prevPage = req.params.prevPage
         const currentPage = req.params.currentPage
         const lastTransactionId = req.params.lastTransactionId
@@ -21,7 +20,8 @@ export const getStripeDonations = async (req: Request, res: Response, next: Next
             });
             res.status(200).json(balanceTransactions)
         }
-        if (prevPage > currentPage) {
+        // ugly ass fucking code man
+        if (prevPage !== "2" && currentPage !== "1" && prevPage > currentPage) {
             const balanceTransactions = await stripe.balanceTransactions.list({
                 limit: 8,
                 ending_before: lastTransactionId
