@@ -161,9 +161,14 @@ export const getOrgItems = async (req: Request, res: Response, next: NextFunctio
 export const getItems = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const items = await Item.find().exec();
-
-        res.status(200).json(items)
+        const items = await Item.find().populate('orgId', 'name').exec();
+        const itemsWithUrls = await Promise.all(items.map(async (e) => {
+            const command = new GetObjectCommand({ Bucket: envSanitisedSchema.BUCKET_NAME, Key: e.itemImage });
+            const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+            e.imageUrl = url;
+            return e;
+        }));
+        res.status(200).json(itemsWithUrls)
     } catch (error) {
         next(error)
     }
