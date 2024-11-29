@@ -7,6 +7,17 @@ import Donation from "../models/donation";
 import Item from "../models/item";
 import Organisation from "../models/organisation";
 import { isValidObjectId } from "mongoose";
+// import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+
+// const s3 = new S3Client({
+//     credentials: {
+//         accessKeyId: envSanitisedSchema.ACCESS_KEY,
+//         secretAccessKey: envSanitisedSchema.SECRET_ACCESS_KEY,
+//     },
+//     region: envSanitisedSchema.BUCKET_REGION
+// })
 
 export const getStripeDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -42,8 +53,23 @@ export const getStripeDonations = async (req: Request, res: Response, next: Next
 
 export const getDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const donations = await Donation.find().populate('itemId', 'name').populate('orgId', 'name') // multiple path names in one requires mongoose >= 3.6
+        const donations = await Donation.find().populate('itemId').populate('orgId')
             .exec();
+        // const donationsWithItems = await Promise.all(donations.map(async (donation) => {
+        //     if (donation.orgId) {
+        //         const items = await Item.find({ _id: donation.itemId }).exec();
+        //         const itemsWithUrls = await Promise.all(items.map(async (item) => {
+        //             const command = new GetObjectCommand({ Bucket: envSanitisedSchema.BUCKET_NAME, Key: item.itemImage });
+        //             const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        //             item.itemImage = url;
+
+        //             return items;
+
+        //         }));
+        //         console.log(itemsWithUrls)
+        //         return items
+        //     }
+        // }))
         res.status(200).json(donations)
     } catch (error) {
         next(error)
