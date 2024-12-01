@@ -85,7 +85,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
             try {
                 const organisation = await Organisation.findOne({ _id: data.data.orgId })
                 if (organisation) {
-                    organisation.totalDonationsValue = (organisation.totalDonationsValue + parseInt(data.data.amount))
+                    organisation.totalDonationsValue = (Number(organisation.totalDonationsValue) + Number(data.data.amount))
                     organisation.totalDonationsCount = (organisation.totalDonationsCount + 1)
                     await organisation.save();
                     await Donation.create({
@@ -106,7 +106,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                             res.status(400).json({ message: 'Selected item could not be found' });
                         }
                         else {
-                            item.totalDonationValue = (item.totalDonationValue + parseInt(data.data.amount))
+                            item.totalDonationValue = (Number(item.totalDonationValue) + Number(data.data.amount))
                             await item.save();
                             await transaction.commitTransaction();
                             res.status(201).json({ message: "Donation created successfully" })
