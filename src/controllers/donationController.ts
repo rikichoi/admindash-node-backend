@@ -85,7 +85,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
             try {
                 const organisation = await Organisation.findOne({ _id: data.data.orgId })
                 if (organisation) {
-                    organisation.totalDonationsValue = parseInt(organisation.totalDonationsValue + data.data.amount)
+                    organisation.totalDonationsValue = organisation.totalDonationsValue + parseInt(data.data.amount)
                     organisation.totalDonationsCount = (organisation.totalDonationsCount + 1)
                     await organisation.save();
                     await Donation.create({
