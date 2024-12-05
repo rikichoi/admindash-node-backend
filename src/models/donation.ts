@@ -7,11 +7,13 @@ type Donation = {
     donorName?: string;
     orgId: string;
     itemId?: string;
+    stripePaymentIntentId: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
 const DonationSchema = new Schema({
+    stripePaymentIntentId: { type: String, required: true },
     refundStatus: { type: Boolean, required: false, default: false },
     amount: { type: Number, required: true },
     orgId: { type: Schema.Types.ObjectId, ref: 'Organisation', required: true },

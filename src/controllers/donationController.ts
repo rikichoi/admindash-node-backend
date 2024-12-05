@@ -89,6 +89,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                     organisation.totalDonationsCount = (organisation.totalDonationsCount + 1)
                     await organisation.save();
                     await Donation.create({
+                        stripePaymentIntentId: data.data.payment_intent,
                         amount: parseInt(data.data?.amount),
                         orgId: data.data?.orgId,
                         comment: data.data?.comment,
@@ -98,7 +99,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                         itemId: (data.data?.itemId
                             == "null" ? undefined : data.data?.itemId),
                     });
-                    if (data.data.itemId) {
+                    if (data.data.itemId && data.data.itemId != 'null' || data.data.itemId != null) {
                         const item = await Item.findOne({ _id: data.data.itemId })
                         console.log(item)
                         if (!item) {

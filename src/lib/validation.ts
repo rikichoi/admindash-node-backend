@@ -97,6 +97,7 @@ const contactSchema = z.object({
 
 
 export const createDonationSchema = z.object({
+    payment_intent: requiredString,
     amount: requiredNumericString,
     orgId: requiredString,
     comment: requiredString,

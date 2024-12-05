@@ -7,7 +7,7 @@ router.get("/get-stripe-donations/:prevPage&:currentPage&:lastTransactionId", Do
 
 router.get("/get-donations", DonationController.getDonations);
 
-router.post("/create-donation/:amount&:orgId&:comment&:donorName&:itemId&:email&:phone", DonationController.createDonation);
+router.post("/create-donation/:amount&:orgId&:comment&:donorName&:itemId&:email&:phone&:payment_intent", DonationController.createDonation);
 
 router.delete("/delete-donation/:donationId", DonationController.deleteDonation)
 
