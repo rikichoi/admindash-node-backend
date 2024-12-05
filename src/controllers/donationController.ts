@@ -99,23 +99,29 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                         itemId: (data.data?.itemId
                             == "null" ? undefined : data.data?.itemId),
                     });
-                    if (data.data.itemId && data.data.itemId != 'null' || data.data.itemId != null) {
-                        const item = await Item.findOne({ _id: data.data.itemId })
-                        console.log(item)
-                        if (!item) {
-                            await transaction.abortTransaction();
-                            res.status(400).json({ message: 'Selected item could not be found' });
+                    if (data.data.itemId) {
+                        if (data.data.itemId !== null) {
+                            const item = await Item.findOne({ _id: data.data.itemId })
+                            console.log("got to 1")
+                            if (!item) {
+                                console.log("got to 2")
+                                await transaction.abortTransaction();
+                                res.status(400).json({ message: 'Selected item could not be found' });
+
+                            }
+                            else {
+                                item.totalDonationValue = (Number(item.totalDonationValue) + Number(data.data.amount))
+                                console.log("got to 3")
+                                await item.save();
+                                await transaction.commitTransaction();
+                                res.status(201).json({ message: "Donation created successfully" })
+                            }
                         }
-                        else {
-                            item.totalDonationValue = (Number(item.totalDonationValue) + Number(data.data.amount))
-                            await item.save();
+                        else{
                             await transaction.commitTransaction();
                             res.status(201).json({ message: "Donation created successfully" })
                         }
-
                     }
-                    await transaction.commitTransaction();
-                    res.status(201).json({ message: "Donation created successfully" })
                 }
             }
             catch (error) {
