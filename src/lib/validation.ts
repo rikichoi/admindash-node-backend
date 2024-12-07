@@ -8,7 +8,11 @@ const envSchema = z.object({
     BUCKET_NAME: z.string(),
     BUCKET_REGION: z.string(),
     ACCESS_KEY: z.string(),
-    SECRET_ACCESS_KEY: z.string()
+    SECRET_ACCESS_KEY: z.string(),
+    AWS_SES_IAM_USERNAME: z.string(),
+    AWS_SES_SMTP_USERNAME: z.string(),
+    AWS_SES_PASSWORD: z.string(),
+    AWS_SES_IAM_REGION: z.string(),
 });
 
 export const envSanitisedSchema = envSchema.parse(process.env);

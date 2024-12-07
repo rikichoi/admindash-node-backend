@@ -1,23 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import stripe from "../lib/stripe";
-import { createDonationSchema } from "../lib/validation";
+import { createDonationSchema, envSanitisedSchema } from "../lib/validation";
 import { ZodError } from "zod";
 import createHttpError from "http-errors";
 import Donation from "../models/donation";
 import Item from "../models/item";
 import Organisation from "../models/organisation";
 import { isValidObjectId } from "mongoose";
-// import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+    host: "email-smtp.us-east-2.amazonaws.com",
+    port: 587,
+    secure: false, // upgrade later with STARTTLS
+    auth: {
+        user: envSanitisedSchema.AWS_SES_SMTP_USERNAME,
+        pass: envSanitisedSchema.AWS_SES_PASSWORD,
+    },
+});
 
 
-// const s3 = new S3Client({
-//     credentials: {
-//         accessKeyId: envSanitisedSchema.ACCESS_KEY,
-//         secretAccessKey: envSanitisedSchema.SECRET_ACCESS_KEY,
-//     },
-//     region: envSanitisedSchema.BUCKET_REGION
-// })
 
 export const getStripeDonations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -77,13 +79,19 @@ export const getDonations = async (req: Request, res: Response, next: NextFuncti
 }
 
 export const createDonation = async (req: Request, res: Response, next: NextFunction) => {
+    const mailOptions = {
+        from: "suzuki.riki24@gmail.com", // sender address
+        to: "suzuki.riki24@gmail.com", // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Hello world?", // plain text body
+    }
     try {
         const data = await createDonationSchema.safeParseAsync(req.params)
         if (data.success) {
             const transaction = await Donation.startSession();
             transaction.startTransaction();
             try {
-                const organisation = await Organisation.findOne({ _id: data.data.orgId })
+                const organisation = await Organisation.findOne({ _id: data.data.orgId }).exec()
                 if (organisation) {
                     organisation.totalDonationsValue = (Number(organisation.totalDonationsValue) + Number(data.data.amount))
                     organisation.totalDonationsCount = (organisation.totalDonationsCount + 1)
@@ -100,8 +108,9 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                             == "null" ? undefined : data.data?.itemId),
                     });
                     if (data.data.itemId) {
-                        if (data.data.itemId !== null) {
-                            const item = await Item.findOne({ _id: data.data.itemId })
+                        if (data.data.itemId !== "null") {
+                            const item = await Item.findOne({ _id: data.data.itemId }).exec()
+                            console.log(item)
                             if (!item) {
                                 await transaction.abortTransaction();
                                 res.status(400).json({ message: 'Selected item could not be found' });
@@ -111,13 +120,40 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                                 item.totalDonationValue = (Number(item.totalDonationValue) + Number(data.data.amount))
                                 await item.save();
                                 await transaction.commitTransaction();
+                                transporter.sendMail(mailOptions, (error, info) => {
+                                    if (error) {
+                                        console.log("Error:", error);
+                                    } else {
+                                        console.log("Email sent:", info.response)
+                                    }
+                                })
                                 res.status(201).json({ message: "Donation created successfully" })
                             }
                         }
                         else {
                             await transaction.commitTransaction();
+                            transporter.sendMail(mailOptions, (error, info) => {
+                                if (error) {
+                                    console.log("Error:", error);
+                                } else {
+                                    console.log("Email sent:", info.response)
+
+                                }
+                            })
                             res.status(201).json({ message: "Donation created successfully" })
                         }
+                    }
+                    else {
+                        await transaction.commitTransaction();
+                        console.log("got to 3")
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                console.log("Error:", error);
+                            } else {
+                                console.log("Email sent:", info.response)
+                            }
+                        })
+                        res.status(201).json({ message: "Donation created successfully" })
                     }
                 }
             }
