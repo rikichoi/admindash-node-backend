@@ -79,151 +79,6 @@ export const getDonations = async (req: Request, res: Response, next: NextFuncti
 }
 
 export const createDonation = async (req: Request, res: Response, next: NextFunction) => {
-    const mailOptions = {
-        from: "suzuki.riki24@gmail.com", // sender address
-        to: "suzuki.riki24@gmail.com", // list of receivers
-        subject: "NexaGrid | Transaction Receipt | Thank You!", // Subject line
-        html: `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-          @media screen and (max-width: 600px) {
-            .content {
-                width: 100% !important;
-                display: block !important;
-                padding: 10px !important;
-            }
-            .header, .body, .footer {
-                padding: 20px !important;
-            }
-          }
-        </style>
-            <title>Responsive Email Template</title>
-        </head>
-        <body style="font-family: 'Poppins', Arial, sans-serif">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td align="center" style="padding: 20px;">
-                        <table class="content" width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc;">
-                            <tr>
-                                <td class="header" style="background-color: #345C72; padding: 40px; text-align: center; color: white; font-size: 24px;">
-                                Responsive Email Template
-                                </td>
-                            </tr>
-        
-        
-                            <tr>
-                                <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-                                Hello, All! <br>
-                                Lorem odio soluta quae dolores sapiente voluptatibus recusandae aliquam fugit ipsam.
-                                <br><br>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam corporis sint eum nemo animi velit exercitationem impedit. Incidunt, officia facilis  atque? Ipsam voluptas fugiat distinctio blanditiis veritatis.            
-                                </td>
-                            </tr>
-        
-        
-                            <tr>
-                                <td style="padding: 0px 40px 0px 40px; text-align: center;">
-                                    <!-- CTA Button -->
-                                    <table cellspacing="0" cellpadding="0" style="margin: auto;">
-                                        <tr>
-                                            <td align="center" style="background-color: #345C72; padding: 10px 20px; border-radius: 5px;">
-                                                <a href="https://www.yourwebsite.com" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Book a Free Consulatation</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam corporis sint eum nemo animi velit exercitationem impedit.             
-                                </td>
-                            </tr>
-                            <!-- Footer -->
-                            <tr>
-                                <td class="footer" style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
-                                Copyright &copy; 2024 | Your brand name
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>`,     
-        amp: `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-  @media screen and (max-width: 600px) {
-    .content {
-        width: 100% !important;
-        display: block !important;
-        padding: 10px !important;
-    }
-    .header, .body, .footer {
-        padding: 20px !important;
-    }
-  }
-</style>
-    <title>Responsive Email Template</title>
-</head>
-<body style="font-family: 'Poppins', Arial, sans-serif">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td align="center" style="padding: 20px;">
-                <table class="content" width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc;">
-                    <tr>
-                        <td class="header" style="background-color: #345C72; padding: 40px; text-align: center; color: white; font-size: 24px;">
-                        Responsive Email Template
-                        </td>
-                    </tr>
-
-
-                    <tr>
-                        <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-                        Hello, All! <br>
-                        Lorem odio soluta quae dolores sapiente voluptatibus recusandae aliquam fugit ipsam.
-                        <br><br>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam corporis sint eum nemo animi velit exercitationem impedit. Incidunt, officia facilis  atque? Ipsam voluptas fugiat distinctio blanditiis veritatis.            
-                        </td>
-                    </tr>
-
-
-                    <tr>
-                        <td style="padding: 0px 40px 0px 40px; text-align: center;">
-                            <!-- CTA Button -->
-                            <table cellspacing="0" cellpadding="0" style="margin: auto;">
-                                <tr>
-                                    <td align="center" style="background-color: #345C72; padding: 10px 20px; border-radius: 5px;">
-                                        <a href="https://www.yourwebsite.com" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Book a Free Consulatation</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam corporis sint eum nemo animi velit exercitationem impedit.             
-                        </td>
-                    </tr>
-                    <!-- Footer -->
-                    <tr>
-                        <td class="footer" style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
-                        Copyright &copy; 2024 | Your brand name
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>`, 
-    }
     try {
         const data = await createDonationSchema.safeParseAsync(req.params)
         if (data.success) {
@@ -249,7 +104,7 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                     if (data.data.itemId) {
                         if (data.data.itemId !== "null") {
                             const item = await Item.findOne({ _id: data.data.itemId }).exec()
-                            console.log(item)
+
                             if (!item) {
                                 await transaction.abortTransaction();
                                 res.status(400).json({ message: 'Selected item could not be found' });
@@ -259,18 +114,560 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
                                 item.totalDonationValue = (Number(item.totalDonationValue) + Number(data.data.amount))
                                 await item.save();
                                 await transaction.commitTransaction();
-                                transporter.sendMail(mailOptions, (error, info) => {
-                                    if (error) {
-                                        console.log("Error:", error);
-                                    } else {
-                                        console.log("Email sent:", info.response)
+                                const organisation = await Organisation.findOne({ _id: data.data.orgId }).exec()
+                                const stripeTransaction = await stripe.paymentIntents.retrieve(
+                                    data.data.payment_intent
+                                );
+
+                                const latestCharge = stripeTransaction.latest_charge
+
+                                if (latestCharge) {
+                                    const stripeCharge = await stripe.charges.retrieve(latestCharge.toString())
+
+                                    const mailOptions = {
+                                        from: "suzuki.riki24@gmail.com", // sender address
+                                        to: "suzuki.riki24@gmail.com", // list of receivers
+                                        subject: "NexaGrid | Transaction Receipt | Thank You!", // Subject line
+                                        html: `<!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            @media screen and (max-width: 600px) {
+                .content {
+                    width: 100% !important;
+                    display: block !important;
+                    padding: 10px !important;
+                }
+    
+                .header,
+                .body,
+                .footer {
+                    padding: 20px !important;
+                }
+            }
+        </style>
+        <title>NexaGrid | Transaction Receipt</title>
+    </head>
+    
+    <body style="font-family: 'Poppins', Arial, sans-serif">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="center" style="padding: 20px;">
+                    <table class="content" width="600" border="0" cellspacing="0" cellpadding="0"
+                        style="border-collapse: collapse; border: 1px solid #cccccc;">
+                        <tr>
+                            <td class="header"
+                                style="background-color: #345C72; padding: 40px; text-align: center; color: white;  font-size: 24px;">
+                                <a href="https://nexagrid.vercel.app/" target="_blank"
+                                    style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; width: fit-content; height: fit-content; margin: auto; display: flex; justify-content: center; justify-items: center; align-items: center; gap: 6px;">
+                                    NexaGrid</a>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td class="body" style="padding: 40px; text-align: left; font-size: 18px; line-height: 1.6;">
+                                <p style="font-size: 24px">Payment Confirmation</p> <br>
+                                Hi ${data.data.donorName || undefined},
+                                <br><br>
+                                Thanks, we've received your payment. It may take up to 48 hours for these changes to be
+                                applied to your online account.
+    
+                                <br><br>
+                                <b>Your donation details:</b>
+    
+                                <br><br>
+                                Donation type
+                                <br>
+                                ${data.data.itemId && data.data.itemId !== "null" ? "Item Donation" : "General Donation"}
+    
+                                <br><br>
+                                Organisation
+                                <br>
+                                ${organisation && organisation.name}
+    
+    
+                                ${item && `<br><br>
+                                Item
+                                <br>
+                                ${item.name}`}
+    
+                                <br><br>
+    
+                                <hr>
+                                <br>
+                                <b>Your payment details:</b>
+                                <br><br>
+                                Payment type
+                                <br>
+                                ${stripeCharge.payment_method_details?.type}
+    
+                                <br><br>
+                                Amount Paid
+                                <br>
+                                ${data.data.amount}
+    
+                                <br><br>
+                                Date paid
+                                <br>
+                                ${new Date().toLocaleDateString()}
+    
+                                <br><br>
+                                Receipt number
+                                <br>
+                                ${data.data.payment_intent}
+    
+                                <br><br>
+                                Billed to
+                                <br>
+                                ${data.data.donorName}
+                                <br>
+                                ${stripeCharge.payment_method_details?.card?.brand} ...${stripeCharge.payment_method_details?.card?.last4}
+                                <br>
+                                Exp ${stripeCharge.payment_method_details?.card?.exp_month}/${stripeCharge.payment_method_details?.card?.exp_year}
+    
+                            </td>
+                        </tr>
+    
+                        <tr>
+                            <td style="padding: 40px 40px 40px 40px; text-align: center; font-size: 18px;">
+                                Need help?
+                                <table cellspacing="50" cellpadding="0" style="margin: auto;">
+                                    <tr>
+                                        <td>
+                                            <a href="https://nexagrid.vercel.app/" target="_blank"
+                                                style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; padding: 20px 30px; border-radius: 5px;">
+                                                Visit our Contact page</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+    
+                        <tr>
+                            <td class="footer"
+                                style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
+                                Copyright &copy; ${new Date().getFullYear()} | NexaGrid
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    
+    </html>`,
+                                        amp: `<!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            @media screen and (max-width: 600px) {
+                .content {
+                    width: 100% !important;
+                    display: block !important;
+                    padding: 10px !important;
+                }
+    
+                .header,
+                .body,
+                .footer {
+                    padding: 20px !important;
+                }
+            }
+        </style>
+        <title>NexaGrid | Transaction Receipt</title>
+    </head>
+    
+    <body style="font-family: 'Poppins', Arial, sans-serif">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="center" style="padding: 20px;">
+                    <table class="content" width="600" border="0" cellspacing="0" cellpadding="0"
+                        style="border-collapse: collapse; border: 1px solid #cccccc;">
+                        <tr>
+                            <td class="header"
+                                style="background-color: #345C72; padding: 40px; text-align: center; color: white;  font-size: 24px;">
+                                <a href="https://nexagrid.vercel.app/" target="_blank"
+                                    style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; width: fit-content; height: fit-content; margin: auto; display: flex; justify-content: center; justify-items: center; align-items: center; gap: 6px;">
+                                    NexaGrid</a>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td class="body" style="padding: 40px; text-align: left; font-size: 18px; line-height: 1.6;">
+                                <p style="font-size: 24px">Payment Confirmation</p> <br>
+                                Hi ${data.data.donorName || undefined},
+                                <br><br>
+                                Thanks, we've received your payment. It may take up to 48 hours for these changes to be
+                                applied to your online account.
+    
+                                <br><br>
+                                <b>Your donation details:</b>
+    
+                                <br><br>
+                                Donation type
+                                <br>
+                                ${data.data.itemId && data.data.itemId !== "null" ? "Item Donation" : "General Donation"}
+    
+                                <br><br>
+                                Organisation
+                                <br>
+                                ${organisation && organisation.name}
+    
+    
+                                ${item && `<br><br>
+                                Item
+                                <br>
+                                ${item.name}`}
+    
+                                <br><br>
+    
+                                <hr>
+                                <br>
+                                <b>Your payment details:</b>
+                                <br><br>
+                                Payment type
+                                <br>
+                                ${stripeCharge.payment_method_details?.type}
+    
+                                <br><br>
+                                Amount Paid
+                                <br>
+                                ${data.data.amount}
+    
+                                <br><br>
+                                Date paid
+                                <br>
+                                ${new Date().toLocaleDateString()}
+    
+                                <br><br>
+                                Receipt number
+                                <br>
+                                ${data.data.payment_intent}
+    
+                                <br><br>
+                                Billed to
+                           <br>
+                                ${data.data.donorName}
+                                <br>
+                                ${stripeCharge.payment_method_details?.card?.brand} ...${stripeCharge.payment_method_details?.card?.last4}
+                                <br>
+                                Exp ${stripeCharge.payment_method_details?.card?.exp_month}/${stripeCharge.payment_method_details?.card?.exp_year}
+    
+                            </td>
+                        </tr>
+    
+                        <tr>
+                            <td style="padding: 40px 40px 40px 40px; text-align: center; font-size: 18px;">
+                                Need help?
+                                <table cellspacing="50" cellpadding="0" style="margin: auto;">
+                                    <tr>
+                                        <td>
+                                            <a href="https://nexagrid.vercel.app/" target="_blank"
+                                                style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; padding: 20px 30px; border-radius: 5px;">
+                                                Visit our Contact page</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+    
+                        <tr>
+                            <td class="footer"
+                                style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
+                                Copyright &copy; ${new Date().getFullYear()} | NexaGrid
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    
+    </html>`,
                                     }
-                                })
-                                res.status(201).json({ message: "Donation created successfully" })
+
+                                    transporter.sendMail(mailOptions, (error, info) => {
+                                        if (error) {
+                                            console.log("Error:", error);
+                                        } else {
+                                            console.log("Email sent:", info.response)
+                                        }
+                                    })
+                                    res.status(201).json({ message: "Donation created successfully" })
+                                }
+
                             }
                         }
                         else {
                             await transaction.commitTransaction();
+                            const organisation = await Organisation.findOne({ _id: data.data.orgId }).exec()
+                            const stripeDonation = await stripe.paymentIntents.retrieve(
+                                data.data.payment_intent
+                            );
+                            const mailOptions = {
+                                from: "suzuki.riki24@gmail.com", // sender address
+                                to: "suzuki.riki24@gmail.com", // list of receivers
+                                subject: "NexaGrid | Transaction Receipt | Thank You!", // Subject line
+                                html: `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @media screen and (max-width: 600px) {
+            .content {
+                width: 100% !important;
+                display: block !important;
+                padding: 10px !important;
+            }
+
+            .header,
+            .body,
+            .footer {
+                padding: 20px !important;
+            }
+        }
+    </style>
+    <title>NexaGrid | Transaction Receipt</title>
+</head>
+
+<body style="font-family: 'Poppins', Arial, sans-serif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <table class="content" width="600" border="0" cellspacing="0" cellpadding="0"
+                    style="border-collapse: collapse; border: 1px solid #cccccc;">
+                    <tr>
+                        <td class="header"
+                            style="background-color: #345C72; padding: 40px; text-align: center; color: white;  font-size: 24px;">
+                            <a href="https://nexagrid.vercel.app/" target="_blank"
+                                style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; width: fit-content; height: fit-content; margin: auto; display: flex; justify-content: center; justify-items: center; align-items: center; gap: 6px;">
+                                NexaGrid</a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="body" style="padding: 40px; text-align: left; font-size: 18px; line-height: 1.6;">
+                            <p style="font-size: 24px">Payment Confirmation</p> <br>
+                            Hi ${data.data.donorName || undefined},
+                            <br><br>
+                            Thanks, we've received your payment. It may take up to 48 hours for these changes to be
+                            applied to your online account.
+
+                            <br><br>
+                            <b>Your donation details:</b>
+
+                            <br><br>
+                            Donation type
+                            <br>
+                            ${data.data.itemId && data.data.itemId !== "null" ? "Item Donation" : "General Donation"}
+
+                            <br><br>
+                            Organisation
+                            <br>
+                            ${organisation && organisation.name}
+
+                            <br><br>
+
+                            <hr>
+                            <br>
+                            <b>Your payment details:</b>
+                            <br><br>
+                            Payment type
+                            <br>
+                            ${stripeDonation.payment_method}
+                            ${stripeDonation.payment_method_configuration_details}
+                            ${stripeDonation.payment_method_options}
+
+                            <br><br>
+                            Amount Paid
+                            <br>
+                            ${data.data.amount}
+
+                            <br><br>
+                            Date paid
+                            <br>
+                            ${new Date().toLocaleDateString()}
+
+                            <br><br>
+                            Receipt number
+                            <br>
+                            ${data.data.payment_intent}
+
+                            <br><br>
+                            Billed to
+                            <br>
+                            ${data.data.donorName}
+                            ${stripeDonation}
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 40px 40px 40px 40px; text-align: center; font-size: 18px;">
+                            Need help?
+                            <table cellspacing="50" cellpadding="0" style="margin: auto;">
+                                <tr>
+                                    <td>
+                                        <a href="https://nexagrid.vercel.app/" target="_blank"
+                                            style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; padding: 20px 30px; border-radius: 5px;">
+                                            Visit our Contact page</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="footer"
+                            style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
+                            Copyright &copy; ${new Date().getFullYear()} | NexaGrid
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`,
+                                amp: `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @media screen and (max-width: 600px) {
+            .content {
+                width: 100% !important;
+                display: block !important;
+                padding: 10px !important;
+            }
+
+            .header,
+            .body,
+            .footer {
+                padding: 20px !important;
+            }
+        }
+    </style>
+    <title>NexaGrid | Transaction Receipt</title>
+</head>
+
+<body style="font-family: 'Poppins', Arial, sans-serif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <table class="content" width="600" border="0" cellspacing="0" cellpadding="0"
+                    style="border-collapse: collapse; border: 1px solid #cccccc;">
+                    <tr>
+                        <td class="header"
+                            style="background-color: #345C72; padding: 40px; text-align: center; color: white;  font-size: 24px;">
+                            <a href="https://nexagrid.vercel.app/" target="_blank"
+                                style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; width: fit-content; height: fit-content; margin: auto; display: flex; justify-content: center; justify-items: center; align-items: center; gap: 6px;">
+                                NexaGrid</a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="body" style="padding: 40px; text-align: left; font-size: 18px; line-height: 1.6;">
+                            <p style="font-size: 24px">Payment Confirmation</p> <br>
+                            Hi ${data.data.donorName || undefined},
+                            <br><br>
+                            Thanks, we've received your payment. It may take up to 48 hours for these changes to be
+                            applied to your online account.
+
+                            <br><br>
+                            <b>Your donation details:</b>
+
+                            <br><br>
+                            Donation type
+                            <br>
+                            ${data.data.itemId && data.data.itemId !== "null" ? "Item Donation" : "General Donation"}
+
+                            <br><br>
+                            Organisation
+                            <br>
+                            ${organisation && organisation.name}
+
+                            <br><br>
+
+                            <hr>
+                            <br>
+                            <b>Your payment details:</b>
+                            <br><br>
+                            Payment type
+                            <br>
+                            ${stripeDonation.payment_method}
+                            ${stripeDonation.payment_method_configuration_details}
+                            ${stripeDonation.payment_method_options}
+
+                            <br><br>
+                            Amount Paid
+                            <br>
+                            ${data.data.amount}
+
+                            <br><br>
+                            Date paid
+                            <br>
+                            ${new Date().toLocaleDateString()}
+
+                            <br><br>
+                            Receipt number
+                            <br>
+                            ${data.data.payment_intent}
+
+                            <br><br>
+                            Billed to
+                            <br>
+                            ${data.data.donorName}
+                            ${stripeDonation}
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 40px 40px 40px 40px; text-align: center; font-size: 18px;">
+                            Need help?
+                            <table cellspacing="50" cellpadding="0" style="margin: auto;">
+                                <tr>
+                                    <td>
+                                        <a href="https://nexagrid.vercel.app/" target="_blank"
+                                            style="color: #ffffff; text-decoration: none; font-weight: bold; background-color: #345C72; padding: 20px 30px; border-radius: 5px;">
+                                            Visit our Contact page</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="footer"
+                            style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
+                            Copyright &copy; ${new Date().getFullYear()} | NexaGrid
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`,
+                            }
+
                             transporter.sendMail(mailOptions, (error, info) => {
                                 if (error) {
                                     console.log("Error:", error);
@@ -279,26 +676,19 @@ export const createDonation = async (req: Request, res: Response, next: NextFunc
 
                                 }
                             })
-                            res.status(201).json({ message: "Donation created successfully" })
+                            res.status(201).json({ message: "Donation created successfully  with item" })
                         }
                     }
                     else {
-                        await transaction.commitTransaction();
-                        console.log("got to 3")
-                        transporter.sendMail(mailOptions, (error, info) => {
-                            if (error) {
-                                console.log("Error:", error);
-                            } else {
-                                console.log("Email sent:", info.response)
-                            }
-                        })
-                        res.status(201).json({ message: "Donation created successfully" })
+                        await transaction.abortTransaction();
+                        res.status(400).json({ message: "Unable to create donation due to no relevant stripe transaction data" })
+
                     }
                 }
             }
             catch (error) {
                 await transaction.abortTransaction();
-                res.status(400).json({ message: "Unable to create organistion", error })
+                res.status(400).json({ message: "Unable to create donation", error })
             }
         }
     }
@@ -356,7 +746,7 @@ export const deleteDonation = async (req: Request, res: Response, next: NextFunc
         }
         catch (error) {
             await transaction.abortTransaction();
-            res.status(400).json({ message: "Unable to create organistion", error })
+            res.status(400).json({ message: "Unable to create donation", error })
         }
     }
     catch (error) {
